@@ -1,0 +1,13 @@
+NETCDFF :=/opt/netcdf4/4.2.2-ifort
+FC := ifort
+OBJ = fd1dstg.o io_mod.o 
+fd : $(OBJ)
+	@$(FC)  $^  -o $@  -L$(NETCDFF)/lib -lnetcdff
+fd1dstg.o :  fd1dstg.F90 io_mod.mod
+	@$(FC) -c $<   #-I$(NETCDFF)/include
+io_mod.mod io_mod.o : io_mod.F90
+	@$(FC)  -mp1 -unroll0 -ip-no-inlining -c -w95 -warn all -zero $^ -I$(NETCDFF)/include
+.PHONY : clean
+clean :
+	rm -f fd $(OBJ) 
+	rm -f *.mod
